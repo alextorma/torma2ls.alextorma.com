@@ -1,6 +1,6 @@
 import { bookmarkletsFuncs } from './bookmarklets_lib/library.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+// document.addEventListener('DOMContentLoaded', () => {
   window.copyCode = async (button) => {
     const code = button.nextElementSibling.firstElementChild.innerText.trim();
     button.disabled = true;
@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     codeBlock.parentNode.classList.toggle('has-bmark', bmarkActive);
     codeBlock.parentNode.classList.toggle('has-js', !bmarkActive);
     codeBlock.innerHTML = link.href = bmarkActive ? bmark : func;
+    if (container.classList.contains('blank')) container.classList.remove('blank');
   };
 
   document.querySelectorAll('a.bookmarklet').forEach(a => setCodeBlock(a));
@@ -49,4 +50,4 @@ document.addEventListener('DOMContentLoaded', () => {
       link.classList.remove('dragging');
     });
   });
-});
+// });
