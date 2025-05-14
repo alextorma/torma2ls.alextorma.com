@@ -1,5 +1,5 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/oqd8e84oole2/public_html/Torma2ls
+    - export DEPLOYPATH=/home/oqd8e84oole2/public_html/tools
     - /usr/bin/rsync -av --delete ./ $DEPLOYPATH
