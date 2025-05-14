@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bookmarklets</title>
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <script src="https://unpkg.com/@babel/standalone@7.22.5/babel.min.js"></script>
+  <link rel="stylesheet" href="../torma2ls.css">
+  <script type="module" src="bookmarklets.js"></script>
+</head>
+
+<body bookmarklets>
+
+  <h1 class="bookmarklet_title">Bookmarklets!</h1>
+  <p class="instructions">Drag a link to your bookmarks bar, run the JavaScript in the Console, or consider <a
+      href="https://chromewebstore.google.com/detail/powerlet/ofecodkcadbenmiknnidnfepbblapgkn?hl=en">Powerlet</a>
+  </p>
+  <div class="bookmarklets">
+    <div class="bookmarklet-container">
+      <a class="bookmarklet" id="Upsell" code="updateUpsell" href="">Upsell Fast Mode 🏎️💨</a>
+      <div class="code-block-container">
+        <button class="copy-button" onclick="copyCode(this)">Copy</button>
+        <pre><code></code></pre>
+        <div class="code-tabs">
+          <div class="code-tabs-segmented-control">
+            <button name="minified" class="bmark code-tabs-segmented-option selected">Bookmarklet</button>
+            <button name="js" class="func code-tabs-segmented-option">JavaScript</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bookmarklet-container">
+      <a class="bookmarklet" id="FeatureFlag" code="flipFF" href="">Flip Feature Flag 🔄</a>
+      <div class="code-block-container">
+        <button class="copy-button" onclick="copyCode(this)">Copy</button>
+        <pre><code></code></pre>
+        <div class="code-tabs">
+          <div class="code-tabs-segmented-control">
+            <button name="minified" class="bmark code-tabs-segmented-option selected">Bookmarklet</button>
+            <button name="js" class="func code-tabs-segmented-option">JavaScript</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bookmarklet-container">
+      <a class="bookmarklet" id="MerchEmail" code="createCards" href="">Format Merch Email 📧</a>
+      <div class="code-block-container">
+        <button class="copy-button" onclick="copyCode(this)">Copy</button>
+        <pre><code></code></pre>
+        <div class="code-tabs">
+          <div class="code-tabs-segmented-control">
+            <button name="minified" class="bmark code-tabs-segmented-option selected">Bookmarklet</button>
+            <button name="js" class="func code-tabs-segmented-option">JavaScript</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>
