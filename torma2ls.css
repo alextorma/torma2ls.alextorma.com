@@ -185,7 +185,7 @@ a.bookmarklet:hover {
 .code-block-container pre code,
 .code-block-container pre.language-js code.language-js {
   margin: 0;
-  font-size: 10px;
+  font-size: 0.75rem;
   font-family: 'Fira Code', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
   background-color: #1e1e1e;
   box-sizing: border-box;
