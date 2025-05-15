@@ -267,14 +267,14 @@ a.bookmarklet:hover {
 .code-tabs-segmented-option:hover {
   font-weight: 600;
   border-radius: 0.5rem;
-  background: linear-gradient(transparent, #222, #333) padding-box, var(--button-gradient) border-box;
+  background: linear-gradient(rgb(0 0 0 / 30%), rgb(0 0 0 / 30%)) padding-box, var(--button-gradient) border-box;
 }
 
 .code-tabs-segmented-option.selected {
   color: #fff;
   font-weight: 600;
   border-radius: 0.5rem;
-  background: linear-gradient(transparent, #444) padding-box, var(--button-gradient) border-box;
+  background: linear-gradient(transparent, transparent) padding-box, var(--button-gradient) border-box;
   box-shadow: inset 0px 3px 5px rgba(0, 0, 0, 0.1);
 }
 

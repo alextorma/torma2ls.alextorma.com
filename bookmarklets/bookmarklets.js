@@ -30,12 +30,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   [
     `button span.ghost { font-weight: 600; visibility: hidden; }`,
-    `button span.label:hover { position: absolute; top: 5px; }`,
     `button span.label { position: absolute; top: 1; left: 1rem; }`,
-  ].forEach((css, i) => {
+  ].forEach(css => {
     const sheetInd = [...document.styleSheets].findIndex(sheet => sheet.href.endsWith('torma2ls.css'));
     const ruleInd = [...document.styleSheets[sheetInd].rules].findIndex(rule => rule.selectorText === ".code-tabs-segmented-option:hover");
-    document.styleSheets[sheetInd].insertRule(css, i % 2 !== 0 ? ruleInd + 1 : ruleInd - 1);
+    document.styleSheets[sheetInd].insertRule(css, ruleInd - 1);
   });
 
   document.querySelectorAll('a.bookmarklet').forEach(a => {
