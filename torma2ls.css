@@ -3,6 +3,7 @@
   --secondary-color: #a855f7;
   --button-gradient: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
   --box-shadow: 0 6px 18px rgba(99, 102, 241, 0.5);
+  --fade: opacity 0.15s ease-in-out;
 }
 
 body {
@@ -76,6 +77,12 @@ a:visited {
 body[bookmarklets] {
   height: 100%;
   overflow: auto;
+  transition: var(--fade)
+}
+
+body:has(.bookmarklet-container.blank) {
+  visibility: hidden;
+  opacity: 0;
 }
 
 h1.bookmarklet_title {
@@ -89,14 +96,14 @@ h1.bookmarklet_title {
   max-width: 900px;
   width: 100%;
   margin: 0 auto 2rem auto;
-  justify-items: stretch;
+  justify-content: center;
 }
 
 .bookmarklet-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: opacity 0.15s ease-in-out;
+  transition: var(--fade);
   max-width: 420px;
   margin: 0 auto;
 }
@@ -149,23 +156,57 @@ a.bookmarklet:hover {
 
 .code-block-container pre {
   margin: 0;
-  font-size: 10px;
   padding: 1rem;
-  background-color: #1e1e1e;
   color: #dcdcdc;
+  background-color: #1e1e1e;
   border-radius: 1rem;
   overflow: auto;
   line-height: 1.5;
   box-sizing: border-box;
-  white-space: pre-line;
-  word-break: break-all;
   min-height: 3.5rem;
   height: 100vw;
 }
 
-pre.has-js {
+.code-block-container pre:has(code.hidden) {
+  display: none;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.code-block-container pre,
+.code-block-container pre.language-js {
+  padding: 1rem;
+  min-height: 3.5rem;
+  /* height: 100vw; */
+}
+
+.code-block-container pre,
+.code-block-container pre.language-js,
+.code-block-container pre code,
+.code-block-container pre.language-js code.language-js {
+  margin: 0;
+  font-size: 10px;
+  font-family: 'Fira Code', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  background-color: #1e1e1e;
+  box-sizing: border-box;
+}
+
+.code-block-container pre:has(code.bmark),
+.code-block-container code.bmark,
+.code-block-container pre:has(code.bmark).language-js,
+.code-block-container pre.language-js code.bmark.language-js {
+  white-space: pre-line;
+  word-break: break-all;
+  word-wrap: break-word;
+}
+
+.code-block-container pre:has(code.func),
+.code-block-container code.func,
+.code-block-container pre.language-js:has(code.func),
+.code-block-container pre.language-js code.func.language-js {
   white-space: pre-wrap;
   word-break: break-word;
+  word-wrap: break-word;
 }
 
 .copy-button {
@@ -180,44 +221,47 @@ pre.has-js {
   cursor: pointer;
   font-size: 0.85rem;
   z-index: 10;
+  transition: var(--fade);
+}
+
+.code-block-container .copy-button {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.code-block-container:hover .copy-button {
+  visibility: visible;
+  opacity: 1;
 }
 
 .code-tabs {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  max-width: 100%;
+  display: inline-flex;
   margin: 0.5rem auto 0;
 }
 
 .code-tabs-segmented-control {
-  display: flex;
-  border-radius: 0.5rem;
-  width: 70%;
+  display: inline-flex;
+  border-radius: 0.65rem;
   height: 1.5rem;
   border: 1px solid transparent;
-  background-color: transparent;
   background: linear-gradient(#111, #111) padding-box, var(--button-gradient) border-box;
   min-width: fit-content;
+  padding: .1rem;
+  gap: 0.5rem;
 }
 
 .code-tabs-segmented-option {
   flex: 1;
-  /* padding: 0.2rem 2rem; */
+  position: relative;
+  padding: 0.2rem 1rem;
   width: 100%;
   border: 0;
   min-width: fit-content;
-  border-radius: 0.5rem;
   background-color: transparent;
   color: #ddd;
   text-align: center;
   transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
   user-select: none;
-}
-
-.code-tabs-segmented-control:hover {
-  border-radius: 0.5rem;
-  background: linear-gradient(#111, #111) padding-box, var(--button-gradient) border-box;
 }
 
 .code-tabs-segmented-option:hover {
@@ -270,14 +314,10 @@ pre.has-js {
   }
 }
 
-.bookmarklets:only-child,
-.bookmarklets>.bookmarklet-container:only-child {
-  justify-items: center;
-  justify-content: center;
-}
-
-.bookmarklets>.bookmarklet-container:nth-last-child(1):nth-child(odd) {
-  grid-column: 1 / -1;
-  max-width: 60vw;
-  margin: 0 auto;
+@media (min-width: 700px) {
+  .bookmarklets>.bookmarklet-container:nth-last-child(1):nth-child(odd) {
+    grid-column: 1 / -1;
+    max-width: 60vw;
+    margin: 0 auto;
+  }
 }

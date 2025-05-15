@@ -104,10 +104,11 @@ export const cardCreation = () => {
         'span-container': { 'height': '100%', },
       };
 
-      const createStyle = (target, spacer = '\u0020\u0020\u0020\u0020') => target.innerHTML = `\n${Object.entries(styleTag).map(([selector, rules]) =>
-        `${selector === 'root' ? ':' : '.'}${selector} {\n${spacer}${Object.entries(rules)
-          .map(([prop, value]) => `${prop}: ${value}`)
-          .join(`;\n${spacer}`)};\n}`).join('\n')}\n`;
+      const createStyle = (target, spacer = '\u0020\u0020\u0020\u0020') => {
+        const cssRules = (obj) => Object.entries(obj).map(([prop, value]) => `${prop}: ${value}`).join(`;\n${spacer}`)
+        const fmtdCSS = Object.entries(styleTag).map(([selector, rules]) =>`${selector === 'root' ? ':' : '.'}${selector} {\n${spacer}${cssRules(rules)};\n}`).join('\n')
+        return target.innerHTML = `\n${fmtdCSS}\n`;
+      }
 
       const updateStyles = (card, title) => {
         if (typeof title === 'string') {
