@@ -605,7 +605,7 @@ export const cardCreation = () => {
                             if (this !== e.currentTarget) return;
                             const check = this.checked;
                             this.parentNode.parentNode.classList.toggle('checked', check);
-                            const allButton = this.closest('.shows-grid').querySelector('.card-checkbox-container.shows.all');
+                            const allButton = this.closest('.shows-grid').querySelector('.card-checkbox-container.shows.All');
                             const allShowElems = [...this.parentNode.parentNode.parentNode
                               .querySelectorAll('.card-checkbox-label.shows')];
 
