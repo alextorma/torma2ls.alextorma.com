@@ -38,13 +38,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.querySelectorAll('a.bookmarklet').forEach(a => {
-    const container = a.closest('.bookmarklet-container');
-    const codeBlocks = container.querySelectorAll('code');
-    const link = container.querySelector('a');
+    const link = a;
     const { func, bmark } = bookmarkletsFuncs[link.getAttribute('code')];
-    codeBlocks.forEach(codeBlock => {
-      const bmarkBlock = codeBlock.matches('.bmark');
-      codeBlock.innerHTML = link.href = bmarkBlock ? bmark : func;
+    const container = link.closest('.bookmarklet-container');
+    container.querySelectorAll('code').forEach(codeBlock => {
+      const bmarkBlock = codeBlock.matches('.bmark') ? bmark : func;
+      codeBlock.innerHTML = bmarkBlock;
+      link.href = bmark;
     });
     Prism.highlightAll();
     if (container.classList.contains('blank')) container.classList.remove('blank');
