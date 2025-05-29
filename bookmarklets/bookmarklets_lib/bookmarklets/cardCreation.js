@@ -1,5 +1,19 @@
 export const cardCreation = () => {
   (async () => {
+    const sheetID = window.location.pathname.replace(/^.+d\/(.+)\/edit/, '$1');
+    const sheetGID = window.location.search.replace(/^.+=(\d+)[^\d]?/, '$1')
+    const sheetAsHTML = `https://docs.google.com/spreadsheets/u/0/d/${sheetID}/gviz/tq?tqx=out:html&tq&gid=${sheetGID}`;
+
+    if (
+      window.location.href.includes('docs.google.com/spreadsheets/')
+      && !window.location.href.includes('tqx=out:html')
+      && window.location.href !== sheetAsHTML
+    ) {
+      return window.location.href = sheetAsHTML
+    };
+
+    if (!window.location.href.includes('tqx=out:html')) return;
+
     const policy = window.trustedTypes.createPolicy('cardCreation', {
       createHTML: (input) => input
     });
@@ -544,7 +558,6 @@ export const cardCreation = () => {
             return '';
           }).flatMap(q => q !== '' ? `.${sho.classList.toString().replace(' ', '.')} ${q}` : sho));
           if (obj.id.includes('color')) {
-            console.log({ actingOn, sections, current,/* newst,*/ obj })
             if (checkedSections().includes('Header')) sections.forEach(section => document.querySelectorAll(section).forEach(s => s.style.backgroundColor = obj.value));
             else sections.forEach(section => document.querySelectorAll(section).forEach(s => s.style.color = obj.value));
           }
@@ -862,17 +875,15 @@ export const cardCreation = () => {
       // generatePage(copyButton, merchCards);
       generatePage(customStyles().element, copyButton, merchCards);
 
-      console.log(customStyles().getMerchCardStyles());
-
       console.log(
-        "%c🚨 Heads up!%c\n\n%cThis page is designed to use the 'Copy HTML to Clipboard' button.%c\n\nIf you copy the HTML above, it may not look right everywhere. Use the button for perfect results!\n\n%cIf you insist on copying manually, first run %ciLikeBeingDifficult()%c below, or I can\'t guarantee email compatibility.",
-        "color: #fff; background: #1a458c; font-size: 2em; font-weight: bold; padding: 10px 18px 6px 12px; border-radius: 12px 12px 0 0; display: block; font-family: 'DM Sans', sans-serif;",
-        "",
-        "color: #1a458c; font-size: 1.2em; font-weight: bold; font-family: 'DM Sans', sans-serif;",
-        "color: #222; font-size: 1em; font-family: 'DM Sans', sans-serif;",
-        "color: #888; font-size: 1em; font-family: 'DM Sans', monospace;",
-        "color: #fff; background: #1a458c; font-weight: bold; padding: 2px 8px; border-radius: 4px; font-family: monospace;",
-        "color: #888; font-size: 1em; font-family: 'DM Sans', monospace;"
+        '%c🚨 Heads up!%c\n\n%cThis page is designed to use the \'Copy HTML to Clipboard\' button.%c\n\nIf you copy the HTML above, it may not look right everywhere. Use the button for perfect results!\n\n%cIf you insist on copying manually, first run %ciLikeBeingDifficult()%c below, or I can not guarantee email compatibility.',
+        'color: #fff; background: #1a458c; font-size: 2em; font-weight: bold; padding: 10px 18px 6px 12px; border-radius: 12px 12px 0 0; display: block; font-family: \'DM Sans\', sans-serif;',
+        '',
+        'color: #1a458c; font-size: 1.2em; font-weight: bold; font-family: \'DM Sans\', sans-serif;',
+        'color: #222; background-color: #ddd; font-size: 1em; font-family: \'DM Sans\', sans-serif;',
+        'color: #888; font-size: 1em; font-family: \'DM Sans\', monospace;',
+        'color: #fff; background: #1a458c; font-weight: bold; padding: 2px 8px; border-radius: 4px; font-family: monospace;',
+        'color: #888; font-size: 1em; font-family: \'DM Sans\', monospace;'
       );
     })();
   })();
