@@ -127,6 +127,7 @@ a.bookmarklet {
   width: 100%;
   max-width: 350px;
   text-align: center;
+  margin: 0 0 1rem 0;
 }
 
 a.bookmarklet:hover {
@@ -276,6 +277,11 @@ a.bookmarklet:hover {
   border-radius: 0.5rem;
   background: linear-gradient(transparent, transparent) padding-box, var(--button-gradient) border-box;
   box-shadow: inset 0px 3px 5px rgba(0, 0, 0, 0.1);
+}
+
+.bookmarklet-explained {
+  margin: 0;
+  text-align: center;
 }
 
 @media (max-width: 600px) {
