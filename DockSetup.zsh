@@ -272,7 +272,18 @@ find_app_path() {
 get_adobe_version() {
   local appName="$1"
   local foundApp
-  local app_folders=(/Applications "$HOME/Applications" /System/Applications)
+  local app_folders=()
+
+  # Only add folders that exist
+  for folder in /Applications "$HOME/Applications" /System/Applications; do
+    [[ -d "$folder" ]] && app_folders+=("$folder")
+  done
+
+  # If no valid folders, return empty
+  if [[ ${#app_folders[@]} -eq 0 ]]; then
+    echo ""
+    return
+  fi
 
   if [[ -n $ADOBE_YEAR ]]; then
     foundApp=$(find "${app_folders[@]}" -maxdepth 4 -name "$appName $ADOBE_YEAR.app" \
