@@ -58,7 +58,7 @@ DOCK_audio=(
 
 DOCK_photo=(
   "${DOCK_START[@]}"
-  "PhotoMechanic"
+  "Photo Mechanic 6"
   "${DOCK_END[@]}"
 )
 
