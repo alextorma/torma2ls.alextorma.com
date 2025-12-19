@@ -88,60 +88,59 @@ ADOBE_YEAR=""
 # ----- FUNCTIONS -----
 usage() {
   local valid_teams_str="${(j:, :)VALID_TEAMS}"
-  cat <<EOF
-Usage: $SCRIPT_NAME <team> [options]
-
-Required:
-  team                    The team name for which to set up the Dock.
-                          Valid Teams: $valid_teams_str
-
-Options:
-  -t, --test              Run in test mode (no changes are applied).
-  -x, --xml               In test mode, also show the generated XML.
-  -a, --adobe <year>      Specify the year for Adobe apps, if you
-                          don't want to use the latest installed
-                          version for each app. Example: -a 2025
-  -i, --interactive       Prompt before continuing if any apps are missing.
-  --rollback              Restore the Dock from the most recent backup.
-  -h, --help              Show this help message.
-
-Flags and options can appear before or after the team name.
-
-Examples:
-Examples (copy and paste these into your terminal):
-
-  # Basic usage for the audio team
-  $SCRIPT_DIR/$SCRIPT_NAME audio
-
-  # Set up the Dock for the video team, using Adobe 2025
-  $SCRIPT_DIR/$SCRIPT_NAME video -a 2025
-
-  # Test mode for the design team (no changes applied)
-  $SCRIPT_DIR/$SCRIPT_NAME -t design
-
-  # Test mode for the photo team, show generated XML
-  $SCRIPT_DIR/$SCRIPT_NAME photo --test --xml
-
-  # All options in any order are valid:
-  $SCRIPT_DIR/$SCRIPT_NAME -a 2024 -x -t video
-  $SCRIPT_DIR/$SCRIPT_NAME ingest -t -x -a 2024
-
-  # Options without assosciated values can be combined:
-  $SCRIPT_DIR/$SCRIPT_NAME -xt ingest
-  $SCRIPT_DIR/$SCRIPT_NAME audio -tx -a 2024
-
-  # Interactive mode - prompt if apps are missing
-  $SCRIPT_DIR/$SCRIPT_NAME video -i
-
-  # Test with interactive check
-  $SCRIPT_DIR/$SCRIPT_NAME -t -i design
-
-  # Rollback to previous Dock setup, if available
-  $SCRIPT_DIR/$SCRIPT_NAME --rollback
-
-  # Show this help message
-  $SCRIPT_DIR/$SCRIPT_NAME --help
-EOF
+  cat <<-EOF
+		Usage: $SCRIPT_NAME <team> [options]
+		
+		Required:
+		  team                    The team name for which to set up the Dock.
+		                          alid Teams: $valid_teams_str
+		
+		Options:
+		  -t, --test              Run in test mode (no changes are applied).
+		  -x, --xml               In test mode, also show the generated XML.
+		  -a, --adobe <year>      Specify the year for Adobe apps, if you
+		                          don't want to use the latest installed
+		                          version for each app. Example: -a 2025
+		  -i, --interactive       Prompt before continuing if any apps are missing.
+		  --rollback              Restore the Dock from the most recent backup.
+		  -h, --help              Show this help message.
+		
+		      Flags and options can appear before or after the team name.
+		
+		Examples (copy and paste these into your terminal):
+		
+		  # Basic usage for the audio team
+		  $SCRIPT_DIR/$SCRIPT_NAME audio
+		
+		  # Set up the Dock for the video team, using Adobe 2025
+			$SCRIPT_DIR/$SCRIPT_NAME video -a 2025
+		
+		  # Test mode for the design team (no changes applied)
+		  $SCRIPT_DIR/$SCRIPT_NAME -t design
+		
+		  # Test mode for the photo team, show generated XML
+		  $SCRIPT_DIR/$SCRIPT_NAME photo --test --xml
+		
+		  # All options in any order are valid:
+		  $SCRIPT_DIR/$SCRIPT_NAME -a 2024 -x -t video
+		  $SCRIPT_DIR/$SCRIPT_NAME ingest -t -x -a 2024
+		
+		  # Options without assosciated values can be combined:
+		  $SCRIPT_DIR/$SCRIPT_NAME -xt ingest
+		  $SCRIPT_DIR/$SCRIPT_NAME audio -tx -a 2024
+		
+		  # Interactive mode - prompt if apps are missing
+		  $SCRIPT_DIR/$SCRIPT_NAME video -i
+		
+		  # Test with interactive check
+		  $SCRIPT_DIR/$SCRIPT_NAME -t -i design
+		
+		  # Rollback to previous Dock setup, if available
+		  $SCRIPT_DIR/$SCRIPT_NAME --rollback
+		
+		  # Show this help message
+		  $SCRIPT_DIR/$SCRIPT_NAME --help
+		EOF
 }
 
 log_to_file() {
@@ -205,7 +204,7 @@ backup_dock() {
     log "INFO" "Backup saved: $backup_file\n"
     # Keep only last 10 backups
     ls -t "$backup_dir"/dock_*.plist | tail -n +11 | xargs rm 2>/dev/null || true
-    echo "$backup_file"
+    print -r -- "$backup_file"
   fi
 }
 
@@ -250,23 +249,31 @@ get_bundle_id() {
 }
 
 find_app_path() {
-  local bundleID="$1"
-  local foundPath=$(mdfind -onlyin "$HOME/Applications" -onlyin /Applications -onlyin /System/Applications "kMDItemCFBundleIdentifier == '$bundleID'" \
-    | sort -r \
-    | head -n 1)
+  local appName="$1"
+  local bundleID="$2"
+  local -a foundPaths
+  local foundPath
 
-  if [[ -n "$foundPath" ]]; then
-    # Use realpath if available, otherwise fall back to readlink loop
-    if command -v realpath &>/dev/null; then
-      realpath "$foundPath"
-    else
-      local targetFile="$foundPath"
-      while [[ -L "$targetFile" ]]; do
-        targetFile=$(readlink "$targetFile")
-      done
-      echo "$targetFile"
-    fi
+  foundPaths=("${(@f)$(mdfind \
+    -onlyin "$HOME/Applications" \
+    -onlyin /Applications \
+    -onlyin /System/Applications \
+    "kMDItemCFBundleIdentifier == '$bundleID'" | sort -r)}")
+
+  if (( ${#foundPaths[@]} == 1 )); then
+    foundPath="${foundPaths[1]}"
+  else
+    for path in "${foundPaths[@]}"; do
+      if [[ "${path:t:r:l}" == "${appName:l}" ]]; then
+        foundPath="$path"
+        break
+      fi
+    done
+
+    [[ -z "$foundPath" && ${#foundPaths[@]} -gt 0 ]] && foundPath="${foundPaths[1]}"
   fi
+
+  [[ -n "$foundPath" ]] && print -r -- "${foundPath:A}"
 }
 
 get_adobe_version() {
@@ -281,7 +288,7 @@ get_adobe_version() {
 
   # If no valid folders, return empty
   if [[ ${#app_folders[@]} -eq 0 ]]; then
-    echo ""
+    print -r -- ""
     return
   fi
 
@@ -298,9 +305,9 @@ get_adobe_version() {
   fi
 
   if [[ -n "$foundApp" ]]; then
-    echo "$foundApp"
+    print -r -- "$foundApp"
   else
-    echo ""
+    print -r -- ""
   fi
 }
 
@@ -322,9 +329,9 @@ get_team_dock() {
 
 get_app_info() {
   local app="$1"
-  local ppName
+  local appName
   local bundleID="$(get_bundle_id "$app")"
-  local appPath="$(find_app_path "$bundleID")"
+  local appPath="$(find_app_path "$app" "$bundleID")"
 
   if [[ -z "$bundleID" ]]; then
     log "WARN" "Skipping (no bundle ID): $app\n"
@@ -340,7 +347,7 @@ get_app_info() {
     appName=$(basename "$appPath" .app)
   fi
 
-  echo "$bundleID|$appPath|$appName"
+  print -r -- "$bundleID|$appPath|$appName"
 }
 
 build_xml() {
@@ -348,7 +355,7 @@ build_xml() {
   local xml="<array>"
   for app in "$@"; do
     bundleID="$(get_bundle_id "$app")"
-    appPath="$(find_app_path "$bundleID")"
+    appPath="$(find_app_path "$app" "$bundleID")"
 
     # Skip if no bundle ID or path (silently in build_xml)
     if [[ -z "$bundleID" ]] || [[ -z "$appPath" ]]; then
@@ -361,33 +368,33 @@ build_xml() {
 
     if [[ -n "$appName" ]]; then
       # Append the XML for one app tile to the string.
-      xml+=$(<<EOF
-<dict>
-<key>tile-data</key>
-<dict>
-<key>bundle-identifier</key>
-<string>$bundleID</string>
-<key>file-data</key>
-<dict>
-  <key>_CFURLString</key>
-  <string>$appPath</string>
-  <key>_CFURLStringType</key>
-  <integer>0</integer>
-</dict>
-<key>file-label</key>
-<string>$appName</string>
-<key>file-type</key>
-<integer>1</integer>
-</dict>
-<key>tile-type</key>
-<string>file-tile</string>
-</dict>
-EOF
+      xml+=$(<<-EOF
+				<dict>
+				  <key>tile-data</key>
+				  <dict>
+				    <key>bundle-identifier</key>
+				    <string>$bundleID</string>
+				    <key>file-data</key>
+				    <dict>
+				      <key>_CFURLString</key>
+				      <string>$appPath</string>
+				      <key>_CFURLStringType</key>
+				      <integer>0</integer>
+				    </dict>
+				    <key>file-label</key>
+				    <string>$appName</string>
+				    <key>file-type</key>
+				    <integer>1</integer>
+				  </dict>
+				  <key>tile-type</key>
+				  <string>file-tile</string>
+				</dict>
+			EOF
 )
     fi
   done
   xml+="</array>"
-  echo "$xml"
+  print -r -- "$xml"
 }
 
 apply_or_print() {
@@ -396,15 +403,17 @@ apply_or_print() {
   if [[ "$TEST_MODE" == true ]]; then
     log "PRINT" "----- TEST MODE -----\n"
     log "PRINT" "Dock order for $TEAM team:\n\n"
-    for app in "${DOCK_ORDER[@]}"; do
-      info=$(get_app_info "$app")
-      IFS='|' read -r bundleID appPath appName <<< "$info"
-      if [[ -n "$appName" ]]; then
-        log "PRINT" "- $appName ($bundleID)\n"
-      else
-        log "PRINT" "- $app: Not installed\n"
-      fi
-    done
+    (
+      for app in "${DOCK_ORDER[@]}"; do
+        info=$(get_app_info "$app")
+        IFS='|' read -r bundleID appPath appName <<< "$info"
+        if [[ -n "$appName" ]]; then
+          print -- "- $appName\t$bundleID"
+        else
+          print -- "- $app\t--Not installed--"
+        fi
+      done
+    ) | column -t -s $'\t' | while read -r line; do log "PRINT" "$line\n"; done
 
     if [[ "$SHOW_XML" == true ]]; then
       log "\nPRINT" "Generated XML:\n"
@@ -424,8 +433,10 @@ apply_or_print() {
 }
 
 handle_flag() {
-  case "$1" in
-    a) ADOBE_YEAR="$2" ;;
+  local flag="$1"
+  local value="$2"
+  case "$flag" in
+    a) ADOBE_YEAR="$value" ;;
     t) TEST_MODE=true ;;
     x) SHOW_XML=true ;;
     i) INTERACTIVE=true ;;
@@ -444,7 +455,7 @@ handle_flag() {
 # This loop processes flags and identifies the single positional 'team' argument.
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
-    -[a-zA-Z][a-zA-Z]*)
+    -*[!a][!a]*)
       flags="${1#-}"
       shift
       for (( i=1; i<=${#flags}; i++ )); do
@@ -462,7 +473,15 @@ while [[ "$#" -gt 0 ]]; do
       ;;
     -t|--test) handle_flag "t"; shift ;;
     -x|--xml) handle_flag "x"; shift ;;
-    -a|--adobe) handle_flag "a" "$2"; shift 2 ;;
+    -a|--adobe)
+      if [[ -z "$2" ]]; then
+        log "ERROR" "Flag -a/--adobe requires a year argument.\n"
+        usage
+        exit 1
+      fi
+      handle_flag "a" "$2"
+      shift 2
+    ;;
     -i|--interactive) handle_flag "i"; shift ;;
     -v|--verbose) handle_flag "v"; shift ;;
     -h|--help) handle_flag "h" ;;
@@ -490,13 +509,6 @@ while [[ "$#" -gt 0 ]]; do
   esac
 done
 
-if [[ "$#" -ne 1 ]]; then
-  log "ERROR" "You must specify exactly one team name.\n"
-  usage
-  exit 1
-fi
-TEAM="$1"
-
 if [[ "$SHOW_XML" == true && "$TEST_MODE" == false ]]; then
   SHOW_XML=false
   log "WARN" "--xml flag ignored when not in test mode.\n"
@@ -516,7 +528,6 @@ get_team_dock
 if [[ "$INTERACTIVE" == true ]]; then
   interactive_mode
 fi
-DOCK_XML=$(build_xml "${DOCK_ORDER[@]}")
 apply_or_print
 
 if [[ $ERROR_COUNT -gt 0 ]]; then
