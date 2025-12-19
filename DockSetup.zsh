@@ -197,10 +197,10 @@ validate_environment() {
 backup_dock() {
   local backup_dir="$HOME/.dock_backups"
   local backup_file="$backup_dir/dock_$(date +%Y%m%d_%H%M%S).plist"
-  
+
   mkdir -p "$backup_dir"
   defaults export com.apple.dock "$backup_file" 2>/dev/null
-  
+
   if [[ -f "$backup_file" ]]; then
     log "INFO" "Backup saved: $backup_file\n"
     # Keep only last 10 backups
@@ -478,7 +478,14 @@ while [[ "$#" -gt 0 ]]; do
       fi
       ;;
     *)
-      break
+      if [[ -z "$TEAM" ]]; then
+        TEAM="$1"
+        shift
+      else
+        log "ERROR" "Unexpected argument: $1\n"
+        usage
+        exit 1
+      fi
       ;;
   esac
 done
