@@ -113,7 +113,7 @@ usage() {
 		  $SCRIPT_DIR/$SCRIPT_NAME audio
 		
 		  # Set up the Dock for the video team, using Adobe 2025
-			$SCRIPT_DIR/$SCRIPT_NAME video -a 2025
+		  $SCRIPT_DIR/$SCRIPT_NAME video -a 2025
 		
 		  # Test mode for the design team (no changes applied)
 		  $SCRIPT_DIR/$SCRIPT_NAME -t design
