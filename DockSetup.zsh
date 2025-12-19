@@ -22,7 +22,7 @@ DOCK_END=(
   "Microsoft Outlook"
   "VLC"
   "Cyberduck"
-  "Zoom"
+  "zoom.us"
   "Slack"
   "Creative Cloud"
   "Self Service"
